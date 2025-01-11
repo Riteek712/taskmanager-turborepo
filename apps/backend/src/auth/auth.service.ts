@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-
+import { BadGatewayException, Injectable, NotFoundException } from '@nestjs/common';
+import { RegisterUserDto } from './dto/register.dto';
+import {LoginDto} from './dto/login.dto'
+import * as bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly dataservice: PrismaService,
+    private readonly jwtservice: JwtService
+  ){}
+
+  async login(loginData: LoginDto){
+    const {email, password} = loginData;
+    const user = await this.dataservice.user.findFirst({
+      where:{
+        email: email
+      }
+    })
+    if(!user){
+      throw new NotFoundException("No user exists with the entered email")
+    }
+    console.log(user)
+    const validatePassword = await bcrypt.compare(password, user.password)
+    if(!validatePassword){
+      throw new NotFoundException("Wrong Password")
+    }
+
+    console.log(this.jwtservice.sign({email}))
+    return {
+      token: this.jwtservice.sign({email})
+    }
+
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async register(registerData: RegisterUserDto) {
+    const user = await this.dataservice.user.findFirst({
+      where:{
+        email: registerData.email
+      }
+    })
+    if(user){
+      throw new BadGatewayException('User with this email already exists')
+    }
+    registerData.password = await bcrypt.hash(registerData.password, 10)
+    const res = await this.dataservice.user.create({data: registerData})
+    return res;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+  
 }

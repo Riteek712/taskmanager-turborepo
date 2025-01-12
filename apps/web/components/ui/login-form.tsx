@@ -1,11 +1,15 @@
 "use client";
+
 import React from "react";
+import { useRouter } from 'next/navigation';
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGoogle } from "@tabler/icons-react";
 
 export function LoginFormDemo() {
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -27,12 +31,10 @@ export function LoginFormDemo() {
 
       if (response.ok) {
         console.log("Login successful, JWT token:", result.token);
-        // Save token to localStorage or context
         localStorage.setItem("token", result.token);
-        // Redirect to a protected route or show a success message
+        router.push('/dashboard');
       } else {
         console.error("Login failed:", result.error);
-        // Show an error message to the user
         alert(`Login failed: ${result.error}`);
       }
     } catch (error) {
@@ -52,6 +54,7 @@ export function LoginFormDemo() {
           <Label htmlFor="email">Email Address</Label>
           <Input id="email" name="email" placeholder="you@example.com" type="email" />
         </LabelInputContainer>
+
         <LabelInputContainer className="mb-6">
           <Label htmlFor="password">Password</Label>
           <Input id="password" name="password" placeholder="••••••••" type="password" />

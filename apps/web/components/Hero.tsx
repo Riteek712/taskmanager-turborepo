@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 interface TaskItemProps {
@@ -27,6 +29,8 @@ export default function Hero() {
     { text: "Review project timeline", checked: false },
     { text: "Send weekly report", checked: false },
   ];
+ 
+
 
   return (
     <section className="bg-neutral-900 min-h-screen flex items-center w-full">
@@ -47,10 +51,13 @@ export default function Hero() {
                 Streamline your workflow with our intuitive task management solution. Stay organized, meet deadlines, and
                 achieve more together.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105">
+              <div  className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                
+                <Link href="/auth/signup" passHref>
+                <button  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105">
                   Get Started Free
                 </button>
+                </Link>
                 <button className="px-8 py-4 border border-purple-500 text-purple-500 rounded-lg font-medium hover:bg-purple-500 hover:text-white transition-all">
                   Log In!
                 </button>

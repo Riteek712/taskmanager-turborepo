@@ -22,9 +22,12 @@ export default function Navbar() {
             <button className="text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium">
               Log in
             </button>
+            <Link href="/auth/signup" passHref>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
               Sign up
             </button>
+            </Link>
+            
           </div>
 
           {/* Mobile menu button */}

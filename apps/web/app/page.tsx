@@ -13,14 +13,11 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      {/* Main container */}
+
       <div className="min-h-screen bg-neutral-900">
-        {/* Navigation */}
         <Navbar />
         
-        {/* Main content */}
         <main className="relative h-fit">
-
           <Hero />
           
         </main>

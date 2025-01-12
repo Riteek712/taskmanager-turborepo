@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     // Call your backend API
-    const apiResponse = await fetch('http://localhost:3001/auth/register', {
+    const apiResponse = await fetch('http://localhost:3002/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password }),

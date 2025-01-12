@@ -1,106 +1,236 @@
-// apps/frontend/src/app/dashboard/components/TodoList.tsx
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getTodos } from '../api/todoApi'
-
-interface Todo {
-  id: number
-  task: string
-  description: string
-  status: 'ACTIVE' | 'COMPLETED'
-  createdAt: string
-  updatedAt: string
-  userEmail: string
-}
+import { Todo, TodoStatus } from '../types'
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Edit2, Trash2, AlertCircle } from 'lucide-react'
+import TodoForm from './TodoForm'
+import TodoFilters from './TodoFilters'
 
 export default function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [filteredStatus, setFilteredStatus] = useState<TodoStatus | 'ALL'>('ALL')
+  const [sortBy, setSortBy] = useState<'deadline' | 'created'>('deadline')
 
   useEffect(() => {
     const fetchTodos = async () => {
       try {
         const token = localStorage.getItem('token')
-        if (!token) {
-          router.push('/auth/login')
-          return
-        }
+        const response = await fetch('http://localhost:3003/todo', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-        const todosData = await getTodos(token)
+        if (!response.ok) throw new Error('Failed to fetch todos')
+
+        const todosData = await response.json()
         setTodos(todosData)
       } catch (error) {
-        console.error('Failed to fetch todos:', error)
-        if (error instanceof Error && error.message.includes('unauthorized')) {
-          router.push('/auth/login')
-        }
-      } finally {
-        setLoading(false)
+        console.error('Error fetching todos:', error)
       }
     }
 
     fetchTodos()
-  }, [router])
+  }, []) 
 
-  if (loading) {
-    return (
-      <div className="flex justify-center p-4">
-        <div className="animate-pulse">Loading todos...</div>
-      </div>
-    )
+  
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this todo?')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      await fetch(`http://localhost:3003/todo/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      setTodos(todos.filter(todo => todo.id !== id))
+    } catch (error) {
+      console.error('Error deleting todo:', error)
+    }
   }
 
-  if (error) {
-    return <div className="text-red-500 text-center p-4">{error}</div>
+  const handleStatusChange = async (todo: Todo, newStatus: TodoStatus) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:3003/todo/${todo.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update todo status')
+
+      const updatedTodo = await response.json()
+      setTodos(todos.map(t => t.id === todo.id ? updatedTodo : t))
+    } catch (error) {
+      console.error('Error updating todo status:', error)
+    }
   }
 
-  if (todos.length === 0) {
-    return (
-      <div className="text-center p-8 text-gray-500">
-        No todos yet. Start by creating a new task!
-      </div>
-    )
+  const handleUpdate = async (id: number, updatedData: Partial<Todo>) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:3003/todo/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      })
+
+      if (!response.ok) throw new Error('Failed to update todo')
+
+      const updatedTodo = await response.json()
+      setTodos(todos.map(t => t.id === id ? updatedTodo : t))
+    } catch (error) {
+      console.error('Error updating todo:', error)
+    }
   }
+
+  const handleSubmit = async (todoData: Omit<Todo, 'id'>) => {
+    try {
+      const token = localStorage.getItem('token')
+      
+      if ('id' in todoData) {
+        // Update existing todo
+        const response = await fetch(`http://localhost:3003/todo/${todoData.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(todoData),
+        })
+  
+        if (!response.ok) throw new Error('Failed to update todo')
+  
+        const updatedTodo = await response.json()
+        setTodos(todos.map(t => t.id === updatedTodo.id ? updatedTodo : t))
+      } else {
+        // Create new todo
+        const response = await fetch('http://localhost:3003/api/todo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(todoData),
+        })
+  
+        if (!response.ok) throw new Error('Failed to create todo')
+  
+        const newTodo = await response.json()
+        setTodos([...todos, newTodo])
+      }
+    } catch (error) {
+      console.error('Error saving todo:', error)
+    }
+  }
+
+  const filteredTodos = todos
+  .filter(todo => filteredStatus === 'ALL' || todo.status === filteredStatus)
+  .sort((a, b) => {
+    if (sortBy === 'deadline') {
+      // Add null checks and default dates
+      const dateA = a.deadline ? new Date(a.deadline) : new Date(0);
+      const dateB = b.deadline ? new Date(b.deadline) : new Date(0);
+      return dateA.getTime() - dateB.getTime();
+    }
+    // Add null checks and default dates
+    const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+    const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
 
   return (
-    <div className="space-y-4 p-4">
-      {todos.map((todo) => (
-        <div 
-          key={todo.id}
-          className="border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-gray-800"
-        >
-          <div className="flex flex-col gap-3">
+    <div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="mb-4">Add New Todo</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Todo</DialogTitle>
+          </DialogHeader>
+          <TodoForm onSubmit={handleSubmit} toUpdate={false}/>
+        </DialogContent>
+      </Dialog>
+
+      <TodoFilters 
+        onStatusFilter={setFilteredStatus}
+        onSortChange={setSortBy}
+      />
+
+      <div className="space-y-4">
+        {filteredTodos.map((todo) => (
+          <div
+            key={todo.id}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
+          >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className={`font-medium text-lg ${
-                  todo.status === 'COMPLETED' ? 'line-through text-gray-500' : 'text-gray-900 dark:text-white'
-                }`}>
-                  {todo.task}
-                </h3>
-                {todo.description && (
-                  <p className="mt-1 text-gray-600 dark:text-gray-300">
-                    {todo.description}
-                  </p>
-                )}
+                <h3 className="text-lg font-medium">{todo.task}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">
+                  {todo.description}
+                </p>
+                <div className="mt-2 space-x-2">
+                  {['ACTIVE', 'WORKING', 'DONE'].map((status) => (
+                    <Button
+                      key={status}
+                      variant={todo.status === status ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleStatusChange(todo, status as TodoStatus)}
+                    >
+                      {status}
+                    </Button>
+                  ))}
+                </div>
               </div>
-              <span className={`ml-4 px-3 py-1 rounded-full text-xs font-medium ${
-                todo.status === 'ACTIVE' 
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
-                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              }`}>
-                {todo.status}
-              </span>
+              <div className="flex gap-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit Todo</DialogTitle>
+                    </DialogHeader>
+                    <TodoForm 
+                      todo={todo}
+                      onSubmit={handleSubmit}
+                      toUpdate={true}
+                    />
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => handleDelete(todo.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <span>Created: {new Date(todo.createdAt).toLocaleDateString()}</span>
-              <span>Last updated: {new Date(todo.updatedAt).toLocaleDateString()}</span>
+            <div className="mt-4 flex items-center text-sm text-gray-500">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              Deadline: {todo.deadline ? new Date(todo.deadline).toLocaleDateString() : 'No deadline set'}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

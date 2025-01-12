@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { UserEmail } from '../common/decorators/user-email.decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { TodoStatus } from '@prisma/client';
 
 
 @ApiTags('Todo')
@@ -23,14 +24,32 @@ export class TodoController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ description:'To get all the user tasks.', summary: 'To get all the user tasks.' })
-  @Get()
-  async findAll(@UserEmail()
-  userEmail: string) {
-    console.log(userEmail)
-    return await this.todoService.findAll(userEmail);
-  }
+@UseGuards(JwtAuthGuard)
+@ApiQuery({
+  name: 'status',
+  required: false,
+  description: 'Filter tasks by status (e.g., DONE, ACTIVE, WORKING)',
+  example: 'WORKING',
+})
+@ApiQuery({
+  name: 'sortByDeadline',
+  required: false,
+  description: 'Sort tasks by deadline (asc or desc)',
+  example: 'asc',
+})
+@ApiOperation({
+  description: 'To get all the user tasks with optional filters.',
+  summary: 'To get all the user tasks.',
+})
+@Get()
+async findAll(
+  @UserEmail() userEmail: string,
+  @Query('status') status?: TodoStatus, // Specify the type as TodoStatus
+  @Query('sortByDeadline') sortByDeadline?: 'asc' | 'desc',
+) {
+  console.log(userEmail);
+  return await this.todoService.findAll(userEmail, status, sortByDeadline);
+}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)

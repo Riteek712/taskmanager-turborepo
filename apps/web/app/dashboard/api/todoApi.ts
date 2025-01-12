@@ -6,7 +6,7 @@ export const getTodos = async (token: string) => {
   }
 
   try {
-    const response = await fetch('http://localhost:3002/todo', {
+    const response = await fetch('http://localhost:3003/todo', {
       method: 'GET',
       headers: {
         'Accept': '*/*',

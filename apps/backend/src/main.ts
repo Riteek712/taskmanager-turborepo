@@ -13,7 +13,10 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // If you need to send cookies with the request
   });
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, // Enables automatic transformation of request data
+    whitelist: true, // Strips any properties not defined in the DTO
+  }))
   const config = new DocumentBuilder()
   .setTitle('Task Manager API Documentation')
   .setDescription("A rest api to list user's todos/tasks, authorization implemented using JWT token. THe API is made using NestJs.")
@@ -29,7 +32,7 @@ SwaggerModule.setup('/swagger', app, document, {
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js',
     ],
 });
-  await app.listen(3002);
+  await app.listen(3003);
 }
 bootstrap();
  

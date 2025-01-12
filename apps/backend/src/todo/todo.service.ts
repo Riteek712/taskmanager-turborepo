@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, TodoStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -17,7 +17,8 @@ export class TodoService {
       let data: Prisma.TodoCreateInput = {
         description : createTodoDto.description,
         task: createTodoDto.task,
-        status : 'ACTIVE',
+        status : createTodoDto.status,
+        deadline: createTodoDto.deadline,
         user: {
           connect: { email: user.email },
         },
@@ -29,13 +30,23 @@ export class TodoService {
     
   }
 
-  async findAll( userEmail: string) {
-    return  this.databaseService.todo.findMany({
-      where:{
-        userEmail: userEmail
+  async findAll(userEmail: string, status?: TodoStatus, sortByDeadline?: 'asc' | 'desc') {
+    // Filter only valid status values
+    const validStatus = status && Object.values(TodoStatus).includes(status as TodoStatus)
+      ? status
+      : undefined;
+  
+    return this.databaseService.todo.findMany({
+      where: {
+        userEmail: userEmail,
+        ...(validStatus && { status: validStatus }), // Use validStatus in the query
       },
+      orderBy: sortByDeadline
+        ? { deadline: sortByDeadline }
+        : undefined,
     });
   }
+  
 
   async findOne(id: number, userEmail: string) {
     return this.databaseService.todo.findFirst({

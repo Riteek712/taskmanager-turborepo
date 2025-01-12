@@ -32,7 +32,7 @@ SwaggerModule.setup('/swagger', app, document, {
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js',
     ],
 });
-  await app.listen(3002);
+  await app.listen(3003);
 }
 bootstrap();
  

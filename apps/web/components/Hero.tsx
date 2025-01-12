@@ -58,9 +58,12 @@ export default function Hero() {
                   Get Started Free
                 </button>
                 </Link>
+                <Link href="/auth/login" passHref>
                 <button className="px-8 py-4 border border-purple-500 text-purple-500 rounded-lg font-medium hover:bg-purple-500 hover:text-white transition-all">
                   Log In!
                 </button>
+                </Link>
+                
               </div>
               <div className="mt-8 flex items-center justify-center lg:justify-start space-x-4">
                 <div className="flex -space-x-2">

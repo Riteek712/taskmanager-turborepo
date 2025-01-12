@@ -1,11 +1,19 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "strict": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl":".",
+    "paths":{
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "**/*.ts",

@@ -45,7 +45,11 @@ export class AuthService {
     }
     registerData.password = await bcrypt.hash(registerData.password, 10)
     const res = await this.dataservice.user.create({data: registerData})
-    return res;
+    console.log(res)
+    
+    return {
+      token: this.jwtservice.sign({ email: res.email }),
+    };
   }
 
   

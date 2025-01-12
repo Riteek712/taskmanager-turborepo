@@ -17,7 +17,8 @@ export class TodoService {
       let data: Prisma.TodoCreateInput = {
         description : createTodoDto.description,
         task: createTodoDto.task,
-        status : 'ACTIVE',
+        status : createTodoDto.status,
+        deadline: createTodoDto.deadline,
         user: {
           connect: { email: user.email },
         },

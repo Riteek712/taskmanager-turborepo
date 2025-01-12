@@ -20,6 +20,7 @@ model Todo {
   task  String 
   description String?
   status    TodoStatus 
+  deadline  DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userEmail   String?    // This is used to store the email directly in Todo
@@ -39,4 +40,5 @@ model User {
 enum TodoStatus{
   DONE
   ACTIVE
+  WORKING
 }

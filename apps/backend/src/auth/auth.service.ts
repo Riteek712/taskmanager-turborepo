@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+const EXPIRE_TIME = 20 * 1000;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -105,5 +107,15 @@ export class AuthService {
     } catch (e) {
       return null; // Invalid token
     }
+  }
+
+  async refreshToken(user: string) {
+    const payload = user
+
+    return {
+      accessToken: this.generateAccessToken(user),
+      refreshToken: this.generateRefreshToken(user),
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
+    };
   }
 }

@@ -11,12 +11,11 @@ export class JwtStrategy extends PassportStrategy(Strategy){
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: "Secret"
+            secretOrKey: process.env.JWT_SECRET
         })
     }
 
-    async validate(payload: { email: string }) {
-        console.log(payload)
+    async validate(payload: any) {
         const user = await this.databaseService.user.findFirst({
           where: {
             email: payload.email,

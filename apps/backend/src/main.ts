@@ -9,7 +9,7 @@ async function bootstrap() {
 
 
   app.enableCors({
-    origin: 'http://localhost:3000', // Replace with your frontend's origin
+    origin: 'http://localhost:3001', // Replace with your frontend's origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // If you need to send cookies with the request
   });
@@ -29,7 +29,7 @@ SwaggerModule.setup('/swagger', app, document, {
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js',
     ],
 });
-  await app.listen(3001);
+  await app.listen(3002);
 }
 bootstrap();
  

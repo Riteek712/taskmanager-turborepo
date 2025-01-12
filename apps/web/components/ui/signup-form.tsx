@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { useRouter } from 'next/navigation';
+
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
@@ -8,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 
 export function SignupFormDemo() {
+  const router = useRouter();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
@@ -34,15 +37,18 @@ export function SignupFormDemo() {
   
       if (response.ok) {
         console.log('Signup successful, JWT token:', result.token);
-        // Save token to localStorage or context
+      
         localStorage.setItem('token', result.token);
-        // Redirect to a protected route or show a success message
+        router.push('/dashboard');
       } else {
         console.error('Signup failed:', result.error);
-        // Show an error message to the user
+        alert(`Signup failed: ${result.error}`);
       }
     } catch (error) {
       console.error('An unexpected error occurred:', error);
+      alert("An unexpected error occurred. Please try again later.");
+
+      router.push('/')
     }
   };
   

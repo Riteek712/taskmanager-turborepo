@@ -12,8 +12,8 @@ export default function TodoFilters({ onStatusFilter, onSortChange }: TodoFilter
   return (
     <div className="flex gap-4 mb-6">
       <Select onValueChange={onStatusFilter}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filter by status" />
+        <SelectTrigger className="w-[180px] text-white">
+          <SelectValue  placeholder="Filter by status" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="ALL">All</SelectItem>
@@ -24,7 +24,7 @@ export default function TodoFilters({ onStatusFilter, onSortChange }: TodoFilter
       </Select>
 
       <Select onValueChange={onSortChange}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[180px] text-white">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>

@@ -119,7 +119,7 @@ export default function TodoList() {
         setTodos(todos.map(t => t.id === updatedTodo.id ? updatedTodo : t))
       } else {
         // Create new todo
-        const response = await fetch('http://localhost:3003/api/todo', {
+        const response = await fetch('http://localhost:3003/todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

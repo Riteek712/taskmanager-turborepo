@@ -52,11 +52,11 @@ export default function TodoForm({ todo, onSubmit, toUpdate }: TodoFormProps) {
         await onSubmit(todoData);
       }
       
-      if (!toUpdate) {
-        // Only reset form if it's a new todo
-        e.currentTarget.reset()
-        setDate(undefined)
-      }
+      // if (!toUpdate) {
+      //   // Only reset form if it's a new todo
+      //   e.currentTarget.reset()
+      //   setDate(undefined)
+      // }
     } catch (error) {
       console.error('Error submitting todo:', error)
     } finally {

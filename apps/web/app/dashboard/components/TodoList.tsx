@@ -14,31 +14,34 @@ export default function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [filteredStatus, setFilteredStatus] = useState<TodoStatus | 'ALL'>('ALL')
   const [sortBy, setSortBy] = useState<'deadline' | 'created'>('deadline')
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:3003/todo', {
-          method: 'GET',
+        const token = localStorage.getItem("token");
+        setLoading(true); // Start loading
+        const response = await fetch("http://localhost:3003/todo", {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        })
+        });
 
-        if (!response.ok) throw new Error('Failed to fetch todos')
+        if (!response.ok) throw new Error("Failed to fetch todos");
 
-        const todosData = await response.json()
-        setTodos(todosData)
+        const todosData = await response.json();
+        setTodos(todosData);
       } catch (error) {
-      
-        alert("Error retriving todos or the token expired!")
-        router.push('/');
+        alert("Error retrieving todos or the token expired!");
+        router.push("/");
+      } finally {
+        setLoading(false); // End loading
       }
-    }
+    };
 
-    fetchTodos()
-  }, []) 
+    fetchTodos();
+  }, []);
 
   
 
@@ -156,6 +159,17 @@ export default function TodoList() {
     const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return dateB.getTime() - dateA.getTime();
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div
+          className="animate-spin rounded-full h-16 w-16 border-t-4 border-t-purple-500 border-gray-300"
+          role="status"
+        />
+      </div>
+    );
+  }
 
   return (
     <div>

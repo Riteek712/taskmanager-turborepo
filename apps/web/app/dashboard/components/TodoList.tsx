@@ -7,8 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Edit2, Trash2, AlertCircle } from 'lucide-react'
 import TodoForm from './TodoForm'
 import TodoFilters from './TodoFilters'
+import { useRouter } from 'next/navigation'
 
 export default function TodoList() {
+  const router = useRouter();
   const [todos, setTodos] = useState<Todo[]>([])
   const [filteredStatus, setFilteredStatus] = useState<TodoStatus | 'ALL'>('ALL')
   const [sortBy, setSortBy] = useState<'deadline' | 'created'>('deadline')
@@ -29,7 +31,9 @@ export default function TodoList() {
         const todosData = await response.json()
         setTodos(todosData)
       } catch (error) {
-        console.error('Error fetching todos:', error)
+      
+        alert("Error retriving todos or the token expired!")
+        router.push('/');
       }
     }
 
@@ -157,7 +161,7 @@ export default function TodoList() {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="mb-4">Add New Todo</Button>
+          <Button className="mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-black">Add New Todo</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -176,12 +180,12 @@ export default function TodoList() {
         {filteredTodos.map((todo) => (
           <div
             key={todo.id}
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
+            className=" bg-gradient-to-r from-purple-500 rounded-lg p-6 shadow-sm"
           >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start mb-4 justify-between">
               <div className="flex-1">
-                <h3 className="text-lg font-medium">{todo.task}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">
+                <h3 className="text-lg font-bold">{todo.task}</h3>
+                <p className="text-white font-medium mt-1">
                   {todo.description}
                 </p>
                 <div className="mt-2 space-x-2">
@@ -201,7 +205,7 @@ export default function TodoList() {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="icon">
-                      <Edit2 className="h-4 w-4" />
+                      <Edit2 className="bg-white h-4 w-4" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
@@ -224,7 +228,7 @@ export default function TodoList() {
                 </Button>
               </div>
             </div>
-            <div className="mt-4 flex items-center text-sm text-gray-500">
+            <div className="mt-4 flex items-center text-lg font-semibold text-gray-500">
               <AlertCircle className="h-4 w-4 mr-1" />
               Deadline: {todo.deadline ? new Date(todo.deadline).toLocaleDateString() : 'No deadline set'}
             </div>

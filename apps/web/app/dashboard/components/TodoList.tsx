@@ -163,7 +163,7 @@ export default function TodoList() {
         <DialogTrigger asChild>
           <Button className="mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-black">Add New Todo</Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className='bg-white'>
           <DialogHeader>
             <DialogTitle>Create New Todo</DialogTitle>
           </DialogHeader>
@@ -180,7 +180,7 @@ export default function TodoList() {
         {filteredTodos.map((todo) => (
           <div
             key={todo.id}
-            className=" bg-gradient-to-r from-purple-500 rounded-lg p-6 shadow-sm"
+            className=" bg-purple-500 rounded-lg p-6 shadow-sm"
           >
             <div className="flex items-start mb-4 justify-between">
               <div className="flex-1">
@@ -205,10 +205,10 @@ export default function TodoList() {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="icon">
-                      <Edit2 className="bg-white h-4 w-4" />
+                      <Edit2 className=" h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className='bg-white'>
                     <DialogHeader>
                       <DialogTitle>Edit Todo</DialogTitle>
                     </DialogHeader>

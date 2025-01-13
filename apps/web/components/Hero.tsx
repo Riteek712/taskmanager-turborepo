@@ -35,7 +35,7 @@ export default function Hero() {
   return (
     <section className="bg-neutral-900 min-h-screen flex items-center w-full">
       {/* Add top padding to account for fixed navbar */}
-      <div className="w-full pt-16">
+      <div className="w-full ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Text Content */}

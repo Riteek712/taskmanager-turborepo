@@ -2,6 +2,8 @@
 
 A modern task management system built with Next.js, Nest.js, and Prisma using Turborepo and pnpm for monorepo management.
 
+![TaskFlow Hero](./ProjectScreens/heroTM.png)
+
 ## Tech Stack
 
 ### Frontend
@@ -31,7 +33,7 @@ Before you begin, ensure you have installed:
 ## Project Structure
 
 ```
-taskflow/
+taskmanager-turborepo/
 ├── apps/
 │   ├── web/          # Next.js frontend
 │   └── backend/          # Nest.js backend
@@ -40,8 +42,19 @@ taskflow/
 │   ├── typescript-config/
 │   └── ui/           # Shared UI components
 ├── turbo.json
+├── projectscreens/   # Screenshots of all pages
 └── package.json
 ```
+
+## Project Screenshots
+
+The `ProjectScreens` folder contains screenshots of all pages in the application. You can find:
+- Landing page (heroTM.png)
+- Authentication pages
+- Dashboard views
+- Task management interfaces
+
+These screenshots provide a visual reference for the application's UI and can be helpful for development and documentation purposes.
 
 ## Getting Started
 

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 interface TaskItemProps {
@@ -10,35 +9,37 @@ interface TaskItemProps {
 }
 
 const TaskItem = ({ text, checked }: TaskItemProps) => {
+  const [isChecked, setIsChecked] = React.useState(checked);
+
   return (
     <div className="flex items-center">
       <input
         type="checkbox"
-        defaultChecked={checked}
+        checked={isChecked}
+        onChange={(e) => setIsChecked(e.target.checked)}
         className="w-4 h-4 rounded bg-purple-500 border-transparent focus:ring-purple-500"
       />
-      <span className={`ml-3 ${checked ? 'text-gray-400 line-through' : 'text-white'}`}>{text}</span>
+      <span className={`ml-3 ${isChecked ? 'text-gray-400 line-through' : 'text-white'}`}>
+        {text}
+      </span>
     </div>
   );
 };
 
 export default function Hero() {
-  const tasks = [
+  // Move tasks inside the component to ensure consistent state
+  const [tasks] = React.useState([
     { text: "Update landing page", checked: true },
     { text: "Client meeting", checked: true },
     { text: "Review project timeline", checked: false },
     { text: "Send weekly report", checked: false },
-  ];
- 
-
+  ]);
 
   return (
     <section className="bg-neutral-900 min-h-screen flex items-center w-full">
-      {/* Add top padding to account for fixed navbar */}
-      <div className="w-full ">
+      <div className="w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Text Content */}
             <div className="text-center lg:text-left">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
@@ -51,19 +52,19 @@ export default function Hero() {
                 Streamline your workflow with our intuitive task management solution. Stay organized, meet deadlines, and
                 achieve more together.
               </p>
-              <div  className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                
-                <Link href="/auth/signup" passHref>
-                <button  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link 
+                  href="/auth/signup"
+                  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105"
+                >
                   Get Started Free
-                </button>
                 </Link>
-                <Link href="/auth/login" passHref>
-                <button className="px-8 py-4 border border-purple-500 text-purple-500 rounded-lg font-medium hover:bg-purple-500 hover:text-white transition-all">
+                <Link 
+                  href="/auth/login"
+                  className="px-8 py-4 border border-purple-500 text-purple-500 rounded-lg font-medium hover:bg-purple-500 hover:text-white transition-all"
+                >
                   Log In!
-                </button>
                 </Link>
-                
               </div>
               <div className="mt-8 flex items-center justify-center lg:justify-start space-x-4">
                 <div className="flex -space-x-2">
@@ -77,13 +78,13 @@ export default function Hero() {
                     AL
                   </div>
                 </div>
-                <p className="text-gray-400 text-sm">Joined by 10,000+ teams worldwide in my dreams!</p>
+                <p className="text-gray-400 text-sm">Go ahead and Signup!!</p>
               </div>
             </div>
 
             {/* Right Column - Task Card */}
             <div className="relative">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg blur opacity-75 animate-pulse"></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg blur opacity-75 animate-pulse" />
               <div className="relative bg-neutral-800 p-4 rounded-lg">
                 <div className="bg-neutral-900 rounded-lg p-6 space-y-4">
                   <div className="flex items-center justify-between">

@@ -1,8 +1,7 @@
-// app/page.tsx
 import { Metadata } from 'next';
-import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
-
+import ClientWrapper from '@/components/ClientWrapper';
+import Hero from '@/components/Hero';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'TaskFlow - Organize Tasks, Boost Productivity',
@@ -12,17 +11,13 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <>
-
+    <ClientWrapper>
       <div className="min-h-screen bg-neutral-900">
-        <Navbar />
-        
         <main className="relative h-fit">
           <Hero />
-          
         </main>
-
+        <Footer />
       </div>
-    </>
+    </ClientWrapper>
   );
 }

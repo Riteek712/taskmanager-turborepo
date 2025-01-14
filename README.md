@@ -1,84 +1,165 @@
-# Turborepo starter
+# TaskFlow - Task Management System
 
-This is an official starter Turborepo.
+A modern task management system built with Next.js, Nest.js, and Prisma using Turborepo and pnpm for monorepo management.
 
-## Using this example
+## Tech Stack
 
-Run the following command:
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Shadcn/ui
 
-```sh
-npx create-turbo@latest
-```
+### Backend
+- Nest.js
+- Prisma ORM
+- PostgreSQL
 
-## What's inside?
+### Development Tools
+- Turborepo
+- pnpm
+- ESLint
+- Prettier
 
-This Turborepo includes the following packages/apps:
+## Prerequisites
 
-### Apps and Packages
+Before you begin, ensure you have installed:
+- Node.js (v18 or higher)
+- pnpm (`npm install -g pnpm`)
+- PostgreSQL
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Project Structure
 
 ```
-cd my-turborepo
-pnpm build
+taskflow/
+├── apps/
+│   ├── web/          # Next.js frontend
+│   └── backend/          # Nest.js backend
+├── packages/
+│   ├── eslint-config/
+│   ├── typescript-config/
+│   └── ui/           # Shared UI components
+├── turbo.json
+└── package.json
 ```
 
-### Develop
+## Getting Started
 
-To develop all apps and packages, run the following command:
-
+1. Clone the repository
+```bash
+git clone https://github.com/Riteek712/taskmanager-turborepo
+cd taskmanager-turborepo
 ```
-cd my-turborepo
+
+2. Install dependencies
+```bash
+pnpm install
+```
+
+3. Set up environment variables
+
+Create `.env` files in both the backend directories:
+
+
+For `apps/backend/.env`:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/taskflow"
+JWT_SECRET="your-secret-key"
+```
+
+4. Set up the database
+```bash
+cd apps/backend
+pnpm prisma generate
+pnpm prisma migrate dev
+```
+
+5. Start the development servers
+```bash
+# From the root directory
 pnpm dev
 ```
 
-### Remote Caching
+This will start:
+- Frontend at http://localhost:3000
+- Backend at http://localhost:3003
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Available Scripts
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+From the root directory:
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+```bash
+pnpm build        # Build all applications
+pnpm run dev          # Start all applications in development mode
+pnpm lint         # Run ESLint across all applications
+pnpm format       # Format code using Prettier
+pnpm test         # Run tests across all applications
 ```
 
-## Useful Links
+## Database Management
 
-Learn more about the power of Turborepo:
+The project uses Prisma ORM with PostgreSQL. To manage your database:
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+```bash
+cd apps/backend
+
+# Generate Prisma Client
+pnpm prisma generate
+
+# Create a migration
+pnpm prisma migrate dev
+
+
+```
+
+## Development Guidelines
+
+### Adding Dependencies
+
+To add a dependency to a specific workspace:
+```bash
+pnpm add <package> --filter <workspace>
+```
+
+Example:
+```bash
+pnpm add axios --filter web
+```
+
+### Creating New Features
+
+1. Create a new branch
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. Make your changes and commit using conventional commits
+```bash
+git commit -m "feat: add new feature"
+```
+
+3. Push and create a pull request
+```bash
+git push origin feature/your-feature-name
+```
+
+
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Built with love by Riteek Rakesh
+- UI Design inspired by modern web applications
+- Special thanks to the open source community
+

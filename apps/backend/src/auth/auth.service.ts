@@ -48,35 +48,36 @@ export class AuthService {
 
   async login(loginData: LoginDto) {
     const { email, password } = loginData;
-
+  
     // Find user by email
     const user = await this.dataservice.user.findFirst({
-      where: {
-        email: email,
-      },
+      where: { email: email },
     });
-
+  
     if (!user) {
       throw new NotFoundException('No user exists with the entered email');
     }
-
-    console.log(user)
-
+  
+    console.log('Stored hashed password:', user.password); // Debugging log
+    console.log('Entered password:', password); // Debugging log
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Entered hashed password:', hashedPassword);
     // Validate password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = (hashedPassword === user.password) ? true: false
+    console.log('Password match result:', isPasswordValid); // Debugging log
+  
     if (!isPasswordValid) {
-      throw new NotFoundException('Wrong Password');
+      throw new UnauthorizedException('Wrong Password'); // Changed exception type
     }
-
+  
     // Generate tokens
     const token = this.generateAccessToken(email);
     const refreshtoken = this.generateRefreshToken(email);
-
-    return {
-      token,
-      refreshtoken,
-    };
+  
+    return { token, refreshtoken };
   }
+  
 
   async register(registerData: RegisterUserDto) {
     // Check if user already exists
@@ -134,7 +135,7 @@ export class AuthService {
 
     const resetToken = this.jwtservice.sign(
       { email },
-      { secret: process.env.JWT_RESET_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_SECRET, expiresIn: '15m' },
     );
 
     const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
@@ -157,22 +158,36 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string) {
     let decoded;
     try {
-      decoded = this.jwtservice.verify(token, { secret: process.env.JWT_RESET_SECRET });
+      decoded = this.jwtservice.verify(token, { secret: process.env.JWT_SECRET });
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');
     }
-
+  
     const user = await this.dataservice.user.findFirst({ where: { email: decoded.email } });
-
+  
     if (!user) throw new NotFoundException('User not found');
-
+  
+    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
+    console.log('New hashed password:', hashedPassword); // Debugging log
+  
+    // Update password in the database
     await this.dataservice.user.update({
       where: { email: decoded.email },
       data: { password: hashedPassword },
     });
-
+  
+    // Verify that bcrypt.compare() works immediately
+    const updatedUser = await this.dataservice.user.findFirst({ where: { email: decoded.email } });
+    console.log('Stored password after update:', updatedUser?.password); // Debugging log
+  
+    const checkPassword = await bcrypt.compare(newPassword, updatedUser?.password || '');
+    console.log('Password validation result:', checkPassword); // Debugging log
+  
+    if (!checkPassword) {
+      throw new BadGatewayException('Password reset failed');
+    }
+  
     return { message: 'Password reset successfully' };
   }
-}
+}  

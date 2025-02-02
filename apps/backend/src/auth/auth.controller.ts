@@ -4,7 +4,7 @@ import { RegisterUserDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RefreshJwtGuard } from './refresh.guard';
-import { ResetPassword } from './dto/reset-password.dto';
+import { ResetPassword, ResetPasswordNext } from './dto/reset-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,6 +27,11 @@ export class AuthController {
   @ApiOperation({ description:'Send Reset password via email.', summary: 'Endpoint to reset password email.' })
   resetPassword(@Body() reset: ResetPassword){
     return this.authService.sendResetPasswordEmail(reset.email)
+  }
+  @Post('reset-password-next')
+  @ApiOperation({ description:'Use Reset password token to set password.', summary: 'step 2 to setup new password.' })
+  resetPasswordStep2(@Body() resetNext: ResetPasswordNext){
+    return this.authService.resetPassword(resetNext.token, resetNext.token);
   }
 
   @UseGuards(RefreshJwtGuard)

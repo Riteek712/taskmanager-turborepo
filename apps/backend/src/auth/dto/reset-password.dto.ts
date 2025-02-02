@@ -7,3 +7,13 @@ export class ResetPassword {
     @IsNotEmpty()
     email: string
 }
+
+export class ResetPasswordNext{
+    @ApiProperty()
+    @IsNotEmpty()
+    token: string
+
+    @ApiProperty()
+    @IsNotEmpty()
+    newPassword: string
+}

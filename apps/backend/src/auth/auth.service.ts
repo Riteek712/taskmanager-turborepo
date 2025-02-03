@@ -47,36 +47,35 @@ export class AuthService {
   }
 
   async login(loginData: LoginDto) {
+    console.log('Received login data:', loginData);
+    console.log('Entered email:', loginData.email);
+    console.log('Entered password:', JSON.stringify(loginData.password));
+
     const { email, password } = loginData;
-  
-    // Find user by email
+
     const user = await this.dataservice.user.findFirst({
-      where: { email: email },
+        where: { email },
     });
-  
+
     if (!user) {
-      throw new NotFoundException('No user exists with the entered email');
+        throw new NotFoundException('No user exists with the entered email');
     }
-  
-    console.log('Stored hashed password:', user.password); // Debugging log
-    console.log('Entered password:', password); // Debugging log
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('Entered hashed password:', hashedPassword);
-    // Validate password
-    // const isPasswordValid = await bcrypt.compare(password, user.password);
-    const isPasswordValid = (hashedPassword === user.password) ? true: false
-    console.log('Password match result:', isPasswordValid); // Debugging log
-  
+
+    console.log('Stored hashed password (DB):', user.password);
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log('Password match result:', isPasswordValid);
+
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Wrong Password'); // Changed exception type
+        throw new NotFoundException('Wrong Password');
     }
-  
-    // Generate tokens
+
     const token = this.generateAccessToken(email);
-    const refreshtoken = this.generateRefreshToken(email);
-  
-    return { token, refreshtoken };
-  }
+    const refreshToken = this.generateRefreshToken(email);
+
+    return { token, refreshToken };
+}
+
   
 
   async register(registerData: RegisterUserDto) {

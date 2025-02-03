@@ -31,7 +31,7 @@ export class AuthController {
   @Post('reset-password-next')
   @ApiOperation({ description:'Use Reset password token to set password.', summary: 'step 2 to setup new password.' })
   resetPasswordStep2(@Body() resetNext: ResetPasswordNext){
-    return this.authService.resetPassword(resetNext.token, resetNext.token);
+    return this.authService.resetPassword(resetNext.token, resetNext.newPassword);
   }
 
   @UseGuards(RefreshJwtGuard)
